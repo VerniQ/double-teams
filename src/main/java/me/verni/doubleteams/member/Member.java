@@ -1,18 +1,20 @@
-package me.verni.member;
+package me.verni.doubleteams.member;
 
 import java.util.UUID;
 
 public class Member {
     private UUID uniqueId;
     private String name;
+    private String tag;
 
-    public Member(UUID uniqueId, String name) {
+    public Member(UUID uniqueId, String name, String tag) {
         this.uniqueId = uniqueId;
         this.name = name;
+        this.tag = tag;
     }
 
-    public static UUID getUniqueId() {
-        return getUniqueId();
+    public UUID getUniqueId() {
+        return uniqueId;
     }
 
     public void setUniqueId(UUID uniqueId) {
@@ -25,5 +27,13 @@ public class Member {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public String getTag() {
+        return tag;
     }
 }

@@ -1,4 +1,4 @@
-package me.verni.team;
+package me.verni.doubleteams.team;
 
 import org.bukkit.entity.Player;
 

@@ -1,6 +1,6 @@
-package me.verni.member;
+package me.verni.doubleteams.member;
 
-import me.verni.database.AbstractDatabaseService;
+import me.verni.doubleteams.database.AbstractDatabaseService;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -11,11 +11,11 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class MemberRepositoryImpl extends AbstractDatabaseService implements MemberRepository {
-    private final String INIT_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS members (id INT AUTO_INCREMENT PRIMARY KEY, uniqueId VARCHAR(255), name VARCHAR(255));";
+    private final String INIT_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS members (id INT AUTO_INCREMENT PRIMARY KEY, uniqueId VARCHAR(255), name VARCHAR(255), tag VARCHAR(255));";
     private final String LOAD_MEMBERS_QUERY = "SELECT * FROM members;";
-    private final String SAVE_MEMBER_QUERY = "INSERT INTO members (uniqueId, name) VALUES (?, ?);";
+    private final String SAVE_MEMBER_QUERY = "INSERT INTO members (uniqueId, name, tag) VALUES (?, ?, ?);";
     private final String REMOVE_MEMBER_QUERY = "DELETE FROM members WHERE uniqueId = ?;";
-    protected MemberRepositoryImpl(DataSource dataSource) {
+    public MemberRepositoryImpl(DataSource dataSource) {
         super(dataSource);
 
         this.initTable();
@@ -40,8 +40,9 @@ public class MemberRepositoryImpl extends AbstractDatabaseService implements Mem
                 while (resultSet.next()) {
                     UUID uniqueId = UUID.fromString(resultSet.getString("uniqueId"));
                     String name = resultSet.getString("name");
+                    String tag = resultSet.getString("tag");
 
-                    members.add(new Member(uniqueId, name));
+                    members.add(new Member(uniqueId, name, tag));
                 }
                 return null;
             } catch (SQLException exception) {
@@ -57,6 +58,7 @@ public class MemberRepositoryImpl extends AbstractDatabaseService implements Mem
             try {
                 preparedStatement.setString(1, member.getUniqueId().toString());
                 preparedStatement.setString(2, member.getName());
+                preparedStatement.setString(3, member.getTag());
 
                 preparedStatement.execute();
 

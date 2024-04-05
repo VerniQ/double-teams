@@ -1,4 +1,4 @@
-package me.verni.configuration;
+package me.verni.doubleteams.configuration;
 
 
 import eu.okaeri.configs.ConfigManager;
@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ConfigurationService {
+public class ConfigService {
 
     private final Set<OkaeriConfig> configs = new HashSet<>();
 

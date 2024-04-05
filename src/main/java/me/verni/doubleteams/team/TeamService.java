@@ -1,6 +1,6 @@
-package me.verni.team;
+package me.verni.doubleteams.team;
 
-import me.verni.configuration.implementation.PluginConfiguration;
+import me.verni.doubleteams.configuration.implementation.PluginConfigImpl;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -9,13 +9,12 @@ import java.util.Map;
 import java.util.Optional;
 
 public class TeamService {
-
-    PluginConfiguration configuration;
     private final Map<String, Team> teamsbyTag = new HashMap<>();
 
+    private final PluginConfigImpl configuration;
     private final TeamRepository teamRepository;
 
-    public TeamService(PluginConfiguration configuration, TeamRepository teamRepository) {
+    public TeamService(PluginConfigImpl configuration, TeamRepository teamRepository) {
         this.configuration = configuration;
         this.teamRepository = teamRepository;
     }
