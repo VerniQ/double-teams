@@ -1,4 +1,4 @@
-package me.verni.configuration;
+package me.verni.doubleteams.configuration;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.nodes.Node;

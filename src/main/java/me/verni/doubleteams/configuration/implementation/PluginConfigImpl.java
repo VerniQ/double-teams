@@ -1,15 +1,15 @@
-package me.verni.configuration.implementation;
+package me.verni.doubleteams.configuration.implementation;
 
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Header;
 import eu.okaeri.configs.annotation.NameModifier;
 import eu.okaeri.configs.annotation.NameStrategy;
 import eu.okaeri.configs.annotation.Names;
-import me.verni.database.DatabaseType;
+import me.verni.doubleteams.database.DatabaseType;
 
 @Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
 @Header("# DoubleTeams Configuration File")
-public class PluginConfiguration extends OkaeriConfig {
+public class PluginConfigImpl extends OkaeriConfig {
 
     public Database database = new Database();
 

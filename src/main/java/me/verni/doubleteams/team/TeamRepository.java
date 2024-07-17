@@ -1,4 +1,4 @@
-package me.verni.team;
+package me.verni.doubleteams.team;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

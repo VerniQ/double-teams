@@ -1,4 +1,4 @@
-package me.verni.database;
+package me.verni.doubleteams.database;
 
 public enum DatabaseType {
 

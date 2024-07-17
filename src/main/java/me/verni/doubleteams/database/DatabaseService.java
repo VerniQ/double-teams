@@ -1,15 +1,15 @@
-package me.verni.database;
+package me.verni.doubleteams.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import me.verni.configuration.implementation.PluginConfiguration;
+import me.verni.doubleteams.configuration.implementation.PluginConfigImpl;
 
 import java.io.File;
 
 public class DatabaseService {
-    private final PluginConfiguration configuration;
+    private final PluginConfigImpl configuration;
 
-    public DatabaseService(PluginConfiguration configuration) {
+    public DatabaseService(PluginConfigImpl configuration) {
         this.configuration = configuration;
     }
 
