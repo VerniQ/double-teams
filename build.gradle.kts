@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     // litecommands
-    val litecommandsVersion = "3.4.0"
+    val litecommandsVersion = "3.4.2"
     implementation("dev.rollczi:litecommands-bukkit:${litecommandsVersion}")
 
     // spigot api
@@ -75,7 +75,8 @@ tasks {
 
         downloadPlugins {
      //       hangar("PlaceholderAPI", "2.11.5")
-   //         github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
+            github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
+            url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
         }
     }
 

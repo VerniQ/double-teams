@@ -13,7 +13,7 @@ public class PluginConfigImpl extends OkaeriConfig {
 
     public Database database = new Database();
 
-    public static class Database {
+    public static class Database extends OkaeriConfig{
         public DatabaseType type = DatabaseType.SQLITE;
         public String host = "localhost";
         public String password = "password";

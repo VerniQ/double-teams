@@ -15,6 +15,8 @@ public class MemberRepositoryImpl extends AbstractDatabaseService implements Mem
     private final String LOAD_MEMBERS_QUERY = "SELECT * FROM members;";
     private final String SAVE_MEMBER_QUERY = "INSERT INTO members (uniqueId, name, tag) VALUES (?, ?, ?);";
     private final String REMOVE_MEMBER_QUERY = "DELETE FROM members WHERE uniqueId = ?;";
+    private final String UPDATE_MEMBER_QUERY = "UPDATE members SET name = ?, tag = ? WHERE uniqueId = ?;";
+
     public MemberRepositoryImpl(DataSource dataSource) {
         super(dataSource);
 
@@ -53,19 +55,57 @@ public class MemberRepositoryImpl extends AbstractDatabaseService implements Mem
     }
 
     @Override
-    public CompletableFuture<Void> saveMember(Member member) {
-        return this.execute(SAVE_MEMBER_QUERY, preparedStatement -> {
-            try {
-                preparedStatement.setString(1, member.getUniqueId().toString());
-                preparedStatement.setString(2, member.getName());
-                preparedStatement.setString(3, member.getTag());
-
-                preparedStatement.execute();
-
+    public boolean existsMember(Member member) {
+        return this.querySync(LOAD_MEMBERS_QUERY, preparedStatement -> {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    UUID uniqueId1 = UUID.fromString(resultSet.getString("uniqueId"));
+                    if (uniqueId1.equals(member.getUniqueId())) {
+                        return true;
+                    }
+                }
+                return false;
             } catch (SQLException exception) {
                 throw new RuntimeException(exception);
             }
         });
+    }
+
+
+    @Override
+    public CompletableFuture<Void> saveMember(Member member) {
+        if (existsMember(member)) {
+            return this.execute(UPDATE_MEMBER_QUERY, preparedStatement -> {
+                try {
+                    preparedStatement.setString(1, member.getName());
+                    preparedStatement.setString(2, member.getTag());
+                    preparedStatement.setString(3, member.getUniqueId().toString());
+
+                    preparedStatement.execute();
+
+                    preparedStatement.getConnection().commit();
+
+                } catch (SQLException exception) {
+                    throw new RuntimeException(exception);
+                }
+            });
+        } else {
+            return this.execute(SAVE_MEMBER_QUERY, preparedStatement -> {
+                try {
+                    preparedStatement.setString(1, member.getUniqueId().toString());
+                    preparedStatement.setString(2, member.getName());
+                    preparedStatement.setString(3, member.getTag());
+
+                    preparedStatement.execute();
+
+                    preparedStatement.getConnection().commit();
+
+                } catch (SQLException exception) {
+                    throw new RuntimeException(exception);
+                }
+            });
+        }
+
     }
 
     @Override
@@ -75,6 +115,8 @@ public class MemberRepositoryImpl extends AbstractDatabaseService implements Mem
                 preparedStatement.setString(1, member.getUniqueId().toString());
 
                 preparedStatement.execute();
+
+                preparedStatement.getConnection().commit();
 
             } catch (SQLException exception) {
                 throw new RuntimeException(exception);

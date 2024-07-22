@@ -21,8 +21,8 @@ public class Member {
         this.uniqueId = uniqueId;
     }
 
-    public static String getName() {
-        return getName();
+    public  String getName() {
+        return name;
     }
 
     public void setName(String name) {

@@ -1,18 +1,33 @@
 package me.verni.doubleteams.team;
 
+import me.verni.doubleteams.member.Member;
+import me.verni.doubleteams.member.MemberService;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class Team {
     public String tag;
     public String name;
-    public List<Player> members;
+    public List<Member> members;
+    private UUID creatorUUID;
 
-    public Team(String tag, String name, List<Player> members) {
+    private MemberService memberService;
+    public Team(String tag, String name, List<Member> members, UUID creatorUUID) {
         this.tag = tag;
         this.name = name;
         this.members = members;
+        this.creatorUUID = creatorUUID;
+    }
+
+    public Team(String tag, String name, List<Member> members, UUID creatorUUID, MemberService memberService) {
+        this.tag = tag;
+        this.name = name;
+        this.members = members;
+        this.creatorUUID = creatorUUID;
+        this.memberService = memberService;
     }
 
     public String getTag() {
@@ -31,21 +46,27 @@ public class Team {
         this.name = name;
     }
 
-    public List<Player> getMembers() {
+    public List<Member> getMembers() {
         return members;
     }
 
-    public void setMembers(List<Player> members) {
+    public void setMembers(List<Member> members) {
         this.members = members;
     }
 
     public void addMember(Player player) {
-        this.members.add(player);
+        Optional<Member> optionalMember = memberService.findMember(player.getUniqueId());
+        optionalMember.ifPresent(member -> this.members.add(member));
     }
 
     public void removeMember(Player player) {
         this.members.removeIf(user -> user.getUniqueId().equals(player.getUniqueId()));
     }
 
-
+    public UUID getCreatorUUID() {
+        return creatorUUID;
+    }
+    public void setCreatorUUID(UUID creatorUUID) {
+        this.creatorUUID = creatorUUID;
+    }
 }
