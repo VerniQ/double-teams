@@ -2,6 +2,8 @@ package me.verni.doubleteams.member;
 
 import me.verni.doubleteams.configuration.implementation.PluginConfigImpl;
 import me.verni.doubleteams.team.Team;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -61,6 +63,14 @@ public class MemberService {
             this.saveMember(this.findMember(player.getUniqueId()).get());
         }
         return this.findMember(player.getUniqueId()).get();
+    }
+
+    public Player plyerFromMember(Member member) {
+        return Bukkit.getPlayer(member.getUniqueId());
+    }
+
+    public OfflinePlayer offlinePlayerFromMember(Member member) {
+        return Bukkit.getOfflinePlayer(member.getUniqueId());
     }
 
     public void loadMembers() {

@@ -9,6 +9,7 @@ import me.verni.doubleteams.configuration.ConfigService;
 import me.verni.doubleteams.configuration.implementation.PluginConfigImpl;
 import me.verni.doubleteams.database.DatabaseService;
 import me.verni.doubleteams.gui.JoinGui;
+import me.verni.doubleteams.gui.TeamGui;
 import me.verni.doubleteams.member.Member;
 import me.verni.doubleteams.member.MemberListener;
 import me.verni.doubleteams.member.MemberRepositoryImpl;
@@ -44,25 +45,28 @@ public class DoubleTeamsPlugin extends JavaPlugin {
 
         TeamService teamService = new TeamService(config, teamRepository);
         MemberService memberService = new MemberService(config, memberRepository);
+        Team team = new Team(memberService);
 
         server.getPluginManager().registerEvents(new MemberListener(memberService, teamService), this);
+
 
         memberService.loadMembers();
         teamService.loadTeams();
 
-        for(Team team : teamService.getTeamsByTag().values()){
-            Bukkit.getConsoleSender().sendMessage("Tag: " + team.getTag() + " Name: " + team.getName());
+        for(Team tempTeam : teamService.getTeamsByTag().values()){
+            Bukkit.getConsoleSender().sendMessage("Tag: " + tempTeam.getTag() + " Name: " + tempTeam.getName());
         }
 
         ConnectMembersToTeams connectMembersToTeams = new ConnectMembersToTeams(memberService, teamService);
         connectMembersToTeams.connect();
 
         JoinGui joinGui = new JoinGui(memberService);
+        TeamGui teamGui = new TeamGui(memberService, teamService);
 
         this.liteCommands = LiteCommandsBukkit.builder("DoubleTeams")
                 .commands(
                         new TestCommand(memberService),
-                        new TeamCommand(memberService, teamService, joinGui))
+                        new TeamCommand(memberService, teamService, joinGui, teamGui))
                 .build();
 
 

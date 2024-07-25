@@ -22,11 +22,7 @@ public class Team {
         this.creatorUUID = creatorUUID;
     }
 
-    public Team(String tag, String name, List<Member> members, UUID creatorUUID, MemberService memberService) {
-        this.tag = tag;
-        this.name = name;
-        this.members = members;
-        this.creatorUUID = creatorUUID;
+    public Team(MemberService memberService) {
         this.memberService = memberService;
     }
 
@@ -69,4 +65,5 @@ public class Team {
     public void setCreatorUUID(UUID creatorUUID) {
         this.creatorUUID = creatorUUID;
     }
+
 }

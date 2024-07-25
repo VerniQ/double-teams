@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.optional.OptionalArg;
 import me.verni.doubleteams.gui.JoinGui;
+import me.verni.doubleteams.gui.TeamGui;
 import me.verni.doubleteams.member.Member;
 import me.verni.doubleteams.member.MemberService;
 import me.verni.doubleteams.team.Team;
@@ -24,20 +25,23 @@ import java.util.List;
 @Command(name = "team")
 public class TeamCommand {
     private final String PREFIX = "&e&lᴛᴇᴀᴍʏ &8» ";
-    private final HashMap<Player, Boolean> confirmationStatus = new HashMap<Player, Boolean>();
+    private HashMap<Player, Boolean> confirmationStatus = new HashMap<Player, Boolean>();
     private final MemberService memberService;
     private final TeamService teamService;
     private JoinGui joinGui;
+    private TeamGui teamGui;
 
 
-    public TeamCommand(MemberService memberService, TeamService teamService, JoinGui joinGui) {
+    public TeamCommand(MemberService memberService, TeamService teamService, JoinGui joinGui, TeamGui teamGui) {
         this.memberService = memberService;
         this.teamService = teamService;
         this.joinGui = joinGui;
+        this.teamGui = teamGui;
     }
 
-    private static String color(String message) {
-        return ColorUtil.colorize(message);
+    @Execute
+    void execute(@Context Player sender) {
+        teamGui.openGui(sender, teamGui.teamGui(sender));
     }
 
     @Execute(name = "create")
@@ -140,16 +144,19 @@ public class TeamCommand {
         Member inviter = memberService.memberFromPlayer(sender);
         Member invited = memberService.memberFromPlayer(target);
 
+        sender.sendMessage("" + target.getName());
+
         Team team = teamService.findTeam(inviter.getTag()).get();
 
         if (team.getCreatorUUID().equals(inviter.getUniqueId())) {
 
-            confirmationStatus.put(sender, false);
+            confirmationStatus.put(target, false);
+            sender.sendMessage(confirmationStatus.get(target).toString());
 
             TextComponent confirmation = new TextComponent(color(PREFIX + "&eOtrzymałeś zaproszenie do teamu: &c" + team.getTag() + " &eod gracza: &c" + inviter.getName()));
             confirmation.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/team confirm invite " + team.getTag()));
             confirmation.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(color("&eKliknij aby potwierdzić zaproszenie!")).create()));
-            sender.spigot().sendMessage(confirmation);
+            target.spigot().sendMessage(confirmation);
 
             memberService.addInvite(invited, team);
 
@@ -183,7 +190,7 @@ public class TeamCommand {
                 case "invite" -> {
                     confirmationStatus.remove(sender);
                     Member member = memberService.memberFromPlayer(sender);
-                    Team team = teamService.findTeam(tag).get();
+                    Team team = teamService.findTeam(tag.toUpperCase()).get();
                     if (!member.getTag().equals("NULL")) {
                         sender.sendMessage(PREFIX + "&cMusisz najpierw opuścić obecny team!");
                         break;
@@ -198,7 +205,9 @@ public class TeamCommand {
                         break;
                     }
 
-                    team.addMember(sender);
+                    List<Member> members = team.getMembers();
+                    members.add(member);
+                    team.setMembers(members);
                     member.setTag(tag);
 
                     sender.sendMessage(color(PREFIX + "&aDołączono do teamu o tagu: &e" + tag));
@@ -210,6 +219,12 @@ public class TeamCommand {
         }
 
     }
+
+
+    private static String color(String message) {
+        return ColorUtil.colorize(message);
+    }
+
 
     public String capitalizeEachWord(String str) {
         String[] words = str.split(" ");
