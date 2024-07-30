@@ -84,15 +84,30 @@ public class TeamGui {
     private PaginatedGui membersGui(Player executor) {
 
         Member member = memberService.memberFromPlayer(executor);
+        Team team = teamService.findTeam(member.getTag()).get();
 
         List<Member> members = teamService.findTeam(member.getTag()).get().getMembers();
         List<GuiItem> membersHeads = new ArrayList<>();
 
         for (Member target : members) {
             OfflinePlayer p = memberService.offlinePlayerFromMember(target);
-            GuiItem item = ItemBuilder.from(SkullUtil.getOfflinePlayerSkull(p, MemberType.MEMBER)).asGuiItem(event -> {
-            });
-            membersHeads.add(item);
+            if (team.getCreatorUUID().equals(p.getUniqueId())) {
+                GuiItem item = ItemBuilder.from(SkullUtil.getOfflinePlayerSkull(p, MemberType.LEADER)).asGuiItem(event -> {
+                });
+                membersHeads.add(item);
+            } else {
+                GuiItem item = ItemBuilder.from(SkullUtil.getOfflinePlayerSkull(p, MemberType.MEMBER)).asGuiItem(event -> {
+
+                    team.removeMember(p);
+                    target.setTag("NULL");
+                    memberService.saveMember(target);
+                    executor.updateInventory();
+
+                });
+                membersHeads.add(item);
+            }
+
+
 
         }
 

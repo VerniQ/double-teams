@@ -65,7 +65,15 @@ public class MemberService {
         return this.findMember(player.getUniqueId()).get();
     }
 
-    public Player plyerFromMember(Member member) {
+    public Member memberFromOfflinePlayer(OfflinePlayer player) {
+        if (this.findMember(player.getUniqueId()).isEmpty()) {
+            this.create(player.getUniqueId(), player.getName(), "NULL");
+            this.saveMember(this.findMember(player.getUniqueId()).get());
+        }
+        return this.findMember(player.getUniqueId()).get();
+    }
+
+    public Player playerFromMember(Member member) {
         return Bukkit.getPlayer(member.getUniqueId());
     }
 

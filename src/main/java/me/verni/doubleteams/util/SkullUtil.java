@@ -23,9 +23,12 @@ public class SkullUtil {
             skullMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c" + player.getName()));
 
             ArrayList<String> lore = new ArrayList<>();
-            lore.add(ChatColor.translateAlternateColorCodes('&', "&7Status: &4*&cWłaściciel Działki"));
+            lore.add(ChatColor.translateAlternateColorCodes('&', "&7ꜱᴛᴀᴛᴜꜱ: &eLider"));
             lore.add(ChatColor.translateAlternateColorCodes('&', " "));
-            lore.add(ChatColor.translateAlternateColorCodes('&', "&7Założyciel działki, nie można go zdegradować!"));
+            lore.add(ChatColor.translateAlternateColorCodes('&', "&7ᴘᴜɴᴋᴛʏ: "));
+            lore.add(ChatColor.translateAlternateColorCodes('&', "&7ᴄᴢᴌᴏɴᴇᴋ ᴏᴅ:"));
+            lore.add(ChatColor.translateAlternateColorCodes('&', " "));
+            lore.add(ChatColor.translateAlternateColorCodes('&', "&7&o"));
 
             skullMeta.setLore(lore);
         }

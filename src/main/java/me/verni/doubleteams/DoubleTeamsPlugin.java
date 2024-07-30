@@ -10,21 +10,21 @@ import me.verni.doubleteams.configuration.implementation.PluginConfigImpl;
 import me.verni.doubleteams.database.DatabaseService;
 import me.verni.doubleteams.gui.JoinGui;
 import me.verni.doubleteams.gui.TeamGui;
-import me.verni.doubleteams.member.Member;
 import me.verni.doubleteams.member.MemberListener;
 import me.verni.doubleteams.member.MemberRepositoryImpl;
 import me.verni.doubleteams.member.MemberService;
+import me.verni.doubleteams.parser.MemberResolver;
 import me.verni.doubleteams.team.Team;
 import me.verni.doubleteams.team.TeamRepositoryImpl;
 import me.verni.doubleteams.team.TeamService;
 import me.verni.doubleteams.util.ConnectMembersToTeams;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
-import java.util.ArrayList;
-import java.util.UUID;
 
 public class DoubleTeamsPlugin extends JavaPlugin {
 
@@ -49,6 +49,8 @@ public class DoubleTeamsPlugin extends JavaPlugin {
 
         server.getPluginManager().registerEvents(new MemberListener(memberService, teamService), this);
 
+        MemberResolver memberResolver = new MemberResolver(memberService, teamService);
+
 
         memberService.loadMembers();
         teamService.loadTeams();
@@ -67,10 +69,9 @@ public class DoubleTeamsPlugin extends JavaPlugin {
                 .commands(
                         new TestCommand(memberService),
                         new TeamCommand(memberService, teamService, joinGui, teamGui))
+                .argumentParser(OfflinePlayer.class, memberResolver)
+                .argumentSuggester(OfflinePlayer.class, memberResolver)
                 .build();
-
-
-
 
 
     }

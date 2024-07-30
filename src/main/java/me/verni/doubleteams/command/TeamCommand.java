@@ -16,6 +16,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -25,11 +26,11 @@ import java.util.List;
 @Command(name = "team")
 public class TeamCommand {
     private final String PREFIX = "&e&lᴛᴇᴀᴍʏ &8» ";
-    private HashMap<Player, Boolean> confirmationStatus = new HashMap<Player, Boolean>();
+    private final HashMap<Player, Boolean> confirmationStatus = new HashMap<>();
     private final MemberService memberService;
     private final TeamService teamService;
-    private JoinGui joinGui;
-    private TeamGui teamGui;
+    private final JoinGui joinGui;
+    private final TeamGui teamGui;
 
 
     public TeamCommand(MemberService memberService, TeamService teamService, JoinGui joinGui, TeamGui teamGui) {
@@ -45,7 +46,7 @@ public class TeamCommand {
     }
 
     @Execute(name = "create")
-    void executeCreate(@Context Player sender, @Arg("tag") String tag, @Arg("name") String name) {
+    void executeCreate(@Context Player sender, @Arg("Tag") String tag, @Arg("Name") String name) {
         Member creator = memberService.memberFromPlayer(sender);
 
         if (!creator.getTag().equals("NULL")) {
@@ -144,7 +145,7 @@ public class TeamCommand {
         Member inviter = memberService.memberFromPlayer(sender);
         Member invited = memberService.memberFromPlayer(target);
 
-        sender.sendMessage("" + target.getName());
+        sender.sendMessage(target.getName());
 
         Team team = teamService.findTeam(inviter.getTag()).get();
 
@@ -167,41 +168,34 @@ public class TeamCommand {
 
     @Execute(name = "join")
     void executeJoin(@Context Player sender) {
-        Member member = memberService.memberFromPlayer(sender);
-        if (!member.getTag().equals("NULL")) {
-            sender.sendMessage(color(PREFIX + "&cMusisz najpierw opuścić obecny team!"));
-            return;
-        } else {
-            joinGui.open(sender, joinGui.joinGui(sender));
+        joinGui.open(sender, joinGui.joinGui(sender));
         }
-    }
 
     @Execute(name = "confirm")
-    void executeConfirm(@Context Player sender, @Arg("Typ") String type, @OptionalArg("tag") String tag) {
+    void executeConfirm(@Context Player sender, @Arg("Typ") String type, @OptionalArg("Tag") String tag) {
         if (!confirmationStatus.containsKey(sender)) {
-            sender.sendMessage(PREFIX + "&cNie masz żadnego oczekującego potwierdzenia!");
+            sender.sendMessage(color(PREFIX + "&cNie masz żadnego oczekującego potwierdzenia!"));
         } else {
             switch (type) {
                 case "delete" -> {
                     confirmationStatus.put(sender, true);
                     sender.performCommand("team delete");
-                    break;
                 }
                 case "invite" -> {
                     confirmationStatus.remove(sender);
                     Member member = memberService.memberFromPlayer(sender);
                     Team team = teamService.findTeam(tag.toUpperCase()).get();
                     if (!member.getTag().equals("NULL")) {
-                        sender.sendMessage(PREFIX + "&cMusisz najpierw opuścić obecny team!");
+                        sender.sendMessage(color(PREFIX + "&cMusisz najpierw opuścić obecny team!"));
                         break;
                     }
                     if (memberService.getInvites(member).isEmpty()) {
-                        sender.sendMessage(PREFIX + "&cNie masz żadnych zaproszeń!");
+                        sender.sendMessage(color(PREFIX + "&cNie masz żadnych zaproszeń!"));
                         break;
                     }
 
                     if (memberService.getInvites(member).size() > 1) {
-                        sender.sendMessage(PREFIX + "&cMasz więcej niż jedno zaproszenie! Użyj /team join aby wybrac team!");
+                        sender.sendMessage(color(PREFIX + "&cMasz więcej niż jedno zaproszenie! Użyj /team join aby wybrac team!"));
                         break;
                     }
 
@@ -213,11 +207,34 @@ public class TeamCommand {
                     sender.sendMessage(color(PREFIX + "&aDołączono do teamu o tagu: &e" + tag));
 
                 }
-                default -> sender.sendMessage(PREFIX + "&cBŁĄD! Zgłoś go najszybciej administracji!");
+                default -> sender.sendMessage(color(PREFIX + "&cBŁĄD! Zgłoś go najszybciej administracji!"));
 
             }
         }
 
+    }
+
+    @Execute(name = "kick")
+    void executeKick(@Context Player sender, @Arg OfflinePlayer target) {
+        Member member = memberService.memberFromPlayer(sender);
+        Member targetMember = memberService.memberFromOfflinePlayer(target);
+
+        Team team = teamService.findTeam(member.getTag()).get();
+
+        if (team.getCreatorUUID().equals(member.getUniqueId())) {
+            if (team.getCreatorUUID().equals(targetMember.getUniqueId())) {
+                sender.sendMessage(color(PREFIX + "&cNie możesz wyrzucić lidera teamu!"));
+                return;
+            }
+            List<Member> members = team.getMembers();
+            members.remove(targetMember);
+            team.setMembers(members);
+            targetMember.setTag("NULL");
+            memberService.saveMember(targetMember);
+            sender.sendMessage(color(PREFIX + "&aWyrzucono gracza: &e" + targetMember.getName()));
+        } else {
+            sender.sendMessage(color(PREFIX + "&cNie jesteś liderem teamu!"));
+        }
     }
 
 

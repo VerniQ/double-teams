@@ -2,6 +2,7 @@ package me.verni.doubleteams.team;
 
 import me.verni.doubleteams.member.Member;
 import me.verni.doubleteams.member.MemberService;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -50,12 +51,12 @@ public class Team {
         this.members = members;
     }
 
-    public void addMember(Player player) {
+    public void addMember(OfflinePlayer player) {
         Optional<Member> optionalMember = memberService.findMember(player.getUniqueId());
         optionalMember.ifPresent(member -> this.members.add(member));
     }
 
-    public void removeMember(Player player) {
+    public void removeMember(OfflinePlayer player) {
         this.members.removeIf(user -> user.getUniqueId().equals(player.getUniqueId()));
     }
 
