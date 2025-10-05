@@ -2,8 +2,8 @@ plugins {
     `java-library`
 
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("xyz.jpenilla.run-paper") version "2.2.0"
+    id("com.gradleup.shadow") version "9.1.0"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 group = "me.verni"
@@ -11,6 +11,7 @@ version = "1.0.0"
 description = "System kooperacji graczy, stworzony dla doublecraft.pl."
 
 repositories {
+    maven("https://repo.papermc.io/repository/maven-public/") // <-- DODAJ TĘ LINIĘ
     gradlePluginPortal()
     mavenCentral()
 
@@ -25,17 +26,16 @@ dependencies {
     val litecommandsVersion = "3.4.2"
     implementation("dev.rollczi:litecommands-bukkit:${litecommandsVersion}")
 
-    // spigot api
-    compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
-    testImplementation("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
+    // peper api
+    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
 
     // okaeri configs
-    val okaeriConfigsVersion = "5.0.0-beta.5"
+    val okaeriConfigsVersion = "5.0.5"
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:${okaeriConfigsVersion}")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:${okaeriConfigsVersion}")
 
     // Gui liblary
-    implementation("dev.triumphteam:triumph-gui:3.1.7")
+    //implementation("dev.triumphteam:triumph-gui:3.1.11")
 
     // hikari
     implementation("com.zaxxer:HikariCP:5.1.0")
@@ -43,7 +43,7 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 bukkit {
@@ -71,7 +71,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.20.4")
+        minecraftVersion("1.21.8")
 
         downloadPlugins {
      //       hangar("PlaceholderAPI", "2.11.5")
@@ -84,9 +84,9 @@ tasks {
         archiveFileName.set("DoubleTeams v${project.version}.jar")
 
         exclude(
-                "org/intellij/lang/annotations/**",
-                "org/jetbrains/annotations/**",
-                "META-INF/**",
+            "org/intellij/lang/annotations/**",
+            "org/jetbrains/annotations/**",
+            "META-INF/**",
         )
 
         mergeServiceFiles()

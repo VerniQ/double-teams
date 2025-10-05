@@ -7,8 +7,6 @@ public interface MemberRepository {
 
     List<Member> loadMembers();
 
-    boolean existsMember(Member member);
-
     CompletableFuture<Void> saveMember(Member member);
 
     CompletableFuture<Void> removeMember(Member member);
